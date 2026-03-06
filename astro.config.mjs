@@ -8,5 +8,9 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://fermarinsanchez.github.io',
   base: process.env.NODE_ENV === 'production' ? '/quicklime/' : '/',
+  build: {
+    // Evitar _astro para que GitHub Pages (Jekyll) no ignore la carpeta de assets
+    assets: 'astro',
+  },
   integrations: [react()]
 });
