@@ -12,6 +12,21 @@ const categoriesMenu = [
 ]
 
 const pathname = Astro.url.pathname
+const base = import.meta.env.BASE_URL
+const basePath = base.replace(/\/$/, "")
+
+function href(category: (typeof categoriesMenu)[number]) {
+ if (category.target) return category.url
+ return basePath + category.url
+}
+
+function isActive(category: (typeof categoriesMenu)[number]) {
+ if (category.target) return false
+ const fullPath = basePath + category.url
+ if (category.url === "/")
+  return pathname === "/" || pathname === base || pathname === fullPath
+ return pathname === fullPath || pathname.startsWith(fullPath + "/")
+}
 ---
 
 <nav class='navbar'>
@@ -19,15 +34,12 @@ const pathname = Astro.url.pathname
   <div class='navbar-menu'>
    {
     categoriesMenu.map((category) => {
-     const isInicio = category.url === "/"
-     const isActive = isInicio
-      ? pathname === "/"
-      : pathname.startsWith(category.url)
+     const isActiveLink = isActive(category)
 
      return (
       <a
-       href={category.url}
-       class={isActive ? "is-active" : undefined}
+       href={href(category)}
+       class={isActiveLink ? "is-active" : undefined}
        target={category.target}
       >
        {category.nombre}
