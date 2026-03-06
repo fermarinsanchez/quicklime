@@ -1,0 +1,629 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro"
+import logoImg from "../assets/images/quicklime-logo.png"
+
+function youtubeId(raw: string): string {
+ const cleaned = raw.trim().split("?")[0].split("&")[0]
+ const match = cleaned.match(
+  /(?:youtube\.com\/watch\?v=|youtu\.be\/|^)([a-zA-Z0-9_-]{11})/,
+ )
+ return match ? match[1] : cleaned
+}
+
+const videos = [
+ {
+  id: "l7LYa3Dx-dQ?si=xUMK2HlikdF1kinW",
+  title: "Summer is over - Black Noise Sessions #1 (Live)",
+ },
+ {
+  id: "PEqCBe3cAao?si=1bJY-WJ0T06OmnPm",
+  title: "I'm done - Black Noise Sessions #1 (Live)",
+ },
+ {
+  id: "0HDj2o13myQ?si=LVjah4N4wxgSpuoY",
+  title: "Old fashion Runners - Black Noise Sessions #1 (Live)",
+ },
+ {
+  id: "69OrRfzsvuI?si=u89NoVOcRIiVQwXo",
+  title: "Lines - Black Noise Sessions #1 (Live)",
+ },
+ {
+  id: "mSxF1YLS58g?si=eHIAZr0mObCNew-R",
+  title: "N.O.T.A. - Black Noise Sessions #1 (Live)",
+ },
+ {
+  id: "s6NxKOTIky8?si=Sk8VgY1uKn_7vZ6u",
+  title: "Quicklime (full set)Black Noise Sessions #1 (Live)",
+ },
+ {
+  id: "jeWo3lFx3xU?si=9HLfqRBdphVlMz77",
+  title: "Quicklime - Lines",
+ },
+ {
+  id: "oswhwRP0WUo?si=BWBOPDhPS1XaV7ea",
+  title: "Quicklime - Old fashion runners",
+ },
+ {
+  id: "NMo8Q8xCfBU?si=UlVALUFyI2NKU1yI",
+  title: "Quicklime - N.O.T.A.",
+ },
+].map((v) => ({ ...v, id: youtubeId(v.id) }))
+
+const defaultId = videos[0]?.id ?? ""
+const embedBase = "https://www.youtube.com/embed"
+---
+
+<SiteLayout title='Vídeos | Quicklime'>
+ <main class='section'>
+  <header class='section-header'>
+   <div class='logo-container'>
+    <img src={logoImg.src} alt='Quicklime logo' class='logo-image' />
+   </div>
+  </header>
+
+  <section class='video-section' id='videos-tv-section' aria-label='Vídeos'>
+   <div class='reel-viewport' id='videos-tv-block'>
+    <div class='reel-center'>
+     <div class='video-screen'>
+      <iframe
+       id='tv-player'
+       class='video-iframe'
+       src={`${embedBase}/${defaultId}?autoplay=0`}
+       title='YouTube'
+       allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+       allowfullscreen></iframe>
+     </div>
+    </div>
+    <div class='reel-carousel-row'>
+     <button
+      type='button'
+      class='reel-btn reel-btn-prev'
+      aria-label='Vídeo anterior'>‹</button
+     >
+     <div class='reel-track' id='reel-track'>
+      <div class='reel-ring' id='reel-ring'>
+       <div class='reel-strip' id='reel-strip'>
+        {
+         videos.map((v, i) => (
+          <button
+           type='button'
+           class='reel-item thumb'
+           role='listitem'
+           data-video-id={v.id}
+           data-index={i}
+           aria-label={`Ver ${v.title}`}
+           aria-pressed={i === 0}
+          >
+           <img
+            src={`https://img.youtube.com/vi/${v.id}/hqdefault.jpg`}
+            alt=''
+            width='160'
+            height='90'
+            loading='lazy'
+           />
+           <span class='thumb-title'>{v.title}</span>
+          </button>
+         ))
+        }
+       </div>
+      </div>
+     </div>
+     <button
+      type='button'
+      class='reel-btn reel-btn-next'
+      aria-label='Vídeo siguiente'>›</button
+     >
+    </div>
+   </div>
+  </section>
+ </main>
+</SiteLayout>
+
+<style>
+ .section {
+  padding: 32px;
+  padding-top: 0;
+  color: #ffffff;
+  position: relative;
+  z-index: 200;
+ }
+
+ .section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ }
+
+ .logo-container {
+  width: 100%;
+  padding: 32px;
+ }
+
+ .logo-image {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+ }
+
+ .video-section {
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+ }
+
+ #videos-tv-block {
+  transform: translateY(100vh);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+ }
+
+ #videos-tv-block.is-visible {
+  transform: translateY(0);
+ }
+
+ /* Móvil por defecto: video arriba, luego [ prev | miniaturas | next ] */
+ .reel-viewport {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 0 0 20px;
+  width: 100%;
+ }
+
+ .reel-carousel-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0 16px;
+  min-width: 0;
+ }
+
+ /* Móvil: ventana central en el flujo, arriba */
+ .reel-center {
+  position: static;
+  left: auto;
+  top: auto;
+  transform: none;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 16px;
+  z-index: 0;
+  background: #0a0a0a;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+ }
+
+ .reel-center .video-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0a0a0a;
+  pointer-events: auto;
+ }
+
+ /* Móvil: pista sin máscara, scroll horizontal normal */
+ .reel-track {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  z-index: 0;
+  mask-image: none;
+  -webkit-mask-image: none;
+ }
+
+ .reel-strip {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  padding: 16px 0;
+  min-width: min-content;
+  box-sizing: border-box;
+ }
+
+ .reel-btn {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+   border-color 0.2s,
+   background 0.2s;
+ }
+
+ .reel-btn:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+ }
+
+ .reel-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+ }
+
+ .reel-track::-webkit-scrollbar {
+  display: none;
+ }
+
+ .reel-ring {
+  display: contents;
+ }
+
+ .reel-item {
+  scroll-snap-align: center;
+  flex: 0 0 auto;
+  width: 160px;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #111;
+  cursor: pointer;
+  transition:
+   border-color 0.2s,
+   transform 0.15s;
+  text-align: left;
+ }
+
+ .reel-item:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.02);
+ }
+
+ .reel-item[aria-pressed="true"] {
+  border-color: #fa6565;
+  box-shadow: 0 0 0 2px #fa6565;
+ }
+
+ .reel-item img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  display: block;
+ }
+
+ .thumb-title {
+  display: block;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+ }
+
+ .video-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+ }
+
+ /* ========== Solo desktop (≥1024px): anillo 3D tipo tuerca ========== */
+ @media (min-width: 1024px) {
+  .video-section {
+   max-width: 1400px;
+   overflow: visible;
+  }
+  .reel-viewport {
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+   gap: 0;
+   padding: 0 24px 32px;
+   min-height: clamp(420px, 55vw, 560px);
+   overflow: visible;
+  }
+  .reel-carousel-row {
+   display: contents;
+  }
+  .reel-center {
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
+   width: min(70%, 560px);
+   max-width: min(560px, calc(100vw - 120px));
+   aspect-ratio: 4 / 3;
+   margin-bottom: 0;
+   pointer-events: none;
+   z-index: 10;
+   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+   border-radius: 12px;
+   overflow: hidden;
+  }
+  .reel-center .video-screen {
+   border-radius: 12px;
+   overflow: hidden;
+  }
+  .reel-track {
+   flex: 1 1 0;
+   min-width: 0;
+   width: 100%;
+   height: clamp(400px, 48vw, 520px);
+   overflow: visible;
+   z-index: 1;
+   perspective: 1600px;
+   perspective-origin: 50% 50%;
+   transform-style: preserve-3d;
+  }
+  .reel-ring {
+   display: block;
+   width: 100%;
+   height: 100%;
+   position: relative;
+   transform-style: preserve-3d;
+   transform-origin: 50% 50%;
+   transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+   transform: rotateY(0deg);
+  }
+  .reel-strip {
+   position: relative;
+   width: 100%;
+   height: 100%;
+   min-height: 360px;
+   transform-style: preserve-3d;
+  }
+  .reel-item {
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   width: clamp(160px, 18vw, 200px);
+   margin-left: clamp(-80px, -9vw, -100px);
+   margin-top: clamp(-92px, -9.5vw, -113px);
+   transform-style: preserve-3d;
+   transform-origin: 50% 50%;
+   backface-visibility: visible;
+   transition: box-shadow 0.2s ease;
+   cursor: pointer;
+   border-radius: 8px;
+   overflow: hidden;
+   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+  .reel-item:hover {
+   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+  }
+  .reel-item img {
+   width: 100%;
+   height: clamp(160px, 18vw, 200px);
+   display: block;
+   object-fit: cover;
+   border-radius: 0;
+  }
+  .reel-item .thumb-title {
+   font-size: 11px;
+   padding: 6px 8px;
+  }
+  .reel-btn {
+   width: 48px;
+   height: 48px;
+   font-size: 28px;
+   z-index: 2;
+  }
+ }
+
+ /* Carrusel inferior: por debajo de 1024px */
+ @media (max-width: 1023px) {
+  .video-section {
+   max-width: 100%;
+   padding-left: 0;
+   padding-right: 0;
+  }
+  .reel-item {
+   width: 140px;
+  }
+  .reel-item img {
+   height: 79px;
+  }
+ }
+
+ @media (max-width: 1023px) {
+  .section {
+   padding: 20px;
+  }
+ }
+</style>
+
+<script>
+ const track = document.getElementById("reel-track")
+ const ring = document.getElementById("reel-ring")
+ const strip = document.getElementById("reel-strip")
+ const iframe = document.getElementById("tv-player")
+ const items = document.querySelectorAll(".reel-item")
+ const prevBtn = document.querySelector(".reel-btn-prev")
+ const nextBtn = document.querySelector(".reel-btn-next")
+ const videos = Array.from(items)
+  .map((el) => ({
+   id: el.getAttribute("data-video-id"),
+   el,
+  }))
+  .filter((v) => v.id)
+
+ const GAP = 12
+
+ function getItemWidth() {
+  const first = items[0]
+  return first && first instanceof HTMLElement ? first.offsetWidth : 160
+ }
+
+ function setupStripPadding() {
+  if (!track || !strip || items.length === 0) return
+  const tw = track.clientWidth
+  const iw = getItemWidth()
+  const pad = Math.max(0, tw / 2 - iw / 2)
+  ;(strip as HTMLElement).style.paddingLeft = `${pad}px`
+  ;(strip as HTMLElement).style.paddingRight = `${pad}px`
+ }
+
+ function scrollToIndex(index: number) {
+  if (!track || !strip || index < 0 || index >= items.length) return
+  const iw = getItemWidth()
+  const scrollLeft = index * (iw + GAP)
+  track.scrollTo({ left: scrollLeft, behavior: "smooth" })
+ }
+
+ const DESKTOP_MQ = "(min-width: 1024px)"
+ const RING_RADIUS_MIN = 300
+ const RING_RADIUS_MAX = 560
+
+ function getRingRadius(): number {
+  if (!track || !(track instanceof HTMLElement)) return 420
+  const w = track.clientWidth || window.innerWidth - 80
+  const r = w * 0.46
+  return Math.round(Math.min(RING_RADIUS_MAX, Math.max(RING_RADIUS_MIN, r)))
+ }
+
+ function setupRing3D() {
+  const isDesktop = window.matchMedia(DESKTOP_MQ).matches
+  if (!ring || items.length === 0) return
+  const N = items.length
+  const anglePerItem = 360 / N
+  if (!isDesktop) {
+   ;(ring as HTMLElement).style.transform = ""
+   items.forEach((el) => {
+    if (el instanceof HTMLElement) {
+     el.style.transform = ""
+     el.style.opacity = ""
+    }
+   })
+   return
+  }
+  const radius = getRingRadius()
+  const ringAngle = -currentIndex * anglePerItem
+  ;(ring as HTMLElement).style.transform = `rotateY(${ringAngle}deg)`
+  items.forEach((el, i) => {
+   if (!(el instanceof HTMLElement)) return
+   const angle = i * anglePerItem
+   el.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`
+   el.style.opacity = "1"
+  })
+ }
+
+ function setActiveIndex(index: number) {
+  const v = videos[index]
+  if (!v || !iframe || !(iframe instanceof HTMLIFrameElement)) return
+  iframe.src = `https://www.youtube.com/embed/${v.id}?autoplay=1`
+  items.forEach((el, i) =>
+   el.setAttribute("aria-pressed", i === index ? "true" : "false"),
+  )
+ }
+
+ function getCenterIndex(): number {
+  if (!track || !strip || items.length === 0) return 0
+  const tw = track.clientWidth
+  const iw = getItemWidth()
+  const pad =
+   parseFloat(getComputedStyle(strip as HTMLElement).paddingLeft) || 0
+  const center = track.scrollLeft + tw / 2
+  let i = Math.round((center - pad - iw / 2) / (iw + GAP))
+  i = Math.max(0, Math.min(i, items.length - 1))
+  return i
+ }
+
+ function update3DTransforms() {
+  const isDesktop = window.matchMedia(DESKTOP_MQ).matches
+  if (!track || !strip || items.length === 0) return
+  if (!isDesktop) {
+   if (ring) (ring as HTMLElement).style.transform = ""
+   items.forEach((el) => {
+    if (el instanceof HTMLElement) {
+     el.style.transform = ""
+     el.style.opacity = ""
+    }
+   })
+   return
+  }
+  setupRing3D()
+ }
+
+ let currentIndex = 0
+
+ function goToIndex(index: number) {
+  currentIndex = index
+  setActiveIndex(currentIndex)
+  if (!window.matchMedia(DESKTOP_MQ).matches) {
+   scrollToIndex(currentIndex)
+  }
+  update3DTransforms()
+ }
+
+ if (track && strip && items.length > 0) {
+  setupStripPadding()
+  window.addEventListener("resize", () => {
+   setupStripPadding()
+   update3DTransforms()
+  })
+
+  track.addEventListener("scroll", () => {
+   if (window.matchMedia(DESKTOP_MQ).matches) return
+   const i = getCenterIndex()
+   if (i !== currentIndex) {
+    currentIndex = i
+    setActiveIndex(i)
+   }
+   update3DTransforms()
+  })
+
+  update3DTransforms()
+  requestAnimationFrame(() => update3DTransforms())
+  setTimeout(update3DTransforms, 100)
+  window.matchMedia(DESKTOP_MQ).addEventListener("change", update3DTransforms)
+
+  prevBtn?.addEventListener("click", () => {
+   const prevIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1
+   goToIndex(prevIndex)
+  })
+
+  nextBtn?.addEventListener("click", () => {
+   const nextIndex = currentIndex >= items.length - 1 ? 0 : currentIndex + 1
+   goToIndex(nextIndex)
+  })
+
+  items.forEach((btn, index) => {
+   btn.addEventListener("click", () => {
+    goToIndex(index)
+   })
+  })
+ }
+
+ if (prevBtn && nextBtn && items.length > 0) {
+  const prev = prevBtn as HTMLButtonElement
+  const next = nextBtn as HTMLButtonElement
+  prev.disabled = false
+  next.disabled = false
+ }
+
+ ;(function () {
+  const section = document.getElementById("videos-tv-section")
+  const block = document.getElementById("videos-tv-block")
+  if (!section || !block) return
+  const observer = new IntersectionObserver(
+   (entries) => {
+    for (const entry of entries) {
+     if (entry.isIntersecting) block.classList.add("is-visible")
+     else block.classList.remove("is-visible")
+    }
+   },
+   { root: null, rootMargin: "0px", threshold: 0.1 },
+  )
+  observer.observe(section)
+ })()
+</script>

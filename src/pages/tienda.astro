@@ -1,0 +1,182 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro"
+import logoImg from "../assets/images/quicklime-logo.png"
+---
+
+<SiteLayout title='Tienda | Quicklime'>
+ <main>
+  <header class='section-header'>
+   <div class='logo-container'>
+    <img src={logoImg.src} alt='Quicklime logo' class='logo-image' />
+   </div>
+  </header>
+  <div class='section'>
+   <div class='coming-soon-card'>
+    <div class='coming-soon-icon' aria-hidden='true'>
+     <svg
+      xmlns='http://www.w3.org/2000/svg'
+      viewBox='0 0 64 64'
+      fill='none'
+      stroke='currentColor'
+      stroke-width='2'
+      stroke-linecap='round'
+      stroke-linejoin='round'
+     >
+      <path d='M20 24v-4a12 12 0 0 1 24 0v4'></path>
+      <path
+       d='M44 24H20a4 4 0 0 0-4 4v28a4 4 0 0 0 4 4h24a4 4 0 0 0 4-4V28a4 4 0 0 0-4-4z'
+      ></path>
+      <circle cx='32' cy='42' r='4'></circle>
+     </svg>
+    </div>
+    <h1 class='coming-soon-title'>TIENDA</h1>
+    <p class='coming-soon-lede'>
+     Merchandising, vinilos y más. Lo estamos montando.
+    </p>
+    <div class='coming-soon-badge'>
+     <span class='coming-soon-badge-text'>Muy pronto</span>
+    </div>
+    <div class='coming-soon-line' aria-hidden='true'></div>
+   </div>
+  </div>
+ </main>
+</SiteLayout>
+
+<style>
+ .section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  color: #ffffff;
+  position: relative;
+  z-index: 200;
+  margin: 0 auto;
+  min-height: 50vh;
+ }
+
+ .section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+ }
+
+ .logo-container {
+  width: 100%;
+  padding: 32px 32px 0;
+ }
+
+ .logo-image {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+ }
+
+ .coming-soon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  padding: 48px 40px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+ }
+
+ .coming-soon-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  opacity: 0.9;
+  color: #ffffff;
+ }
+
+ .coming-soon-icon svg {
+  width: 100%;
+  height: 100%;
+ }
+
+ .coming-soon-title {
+  margin: 0 0 12px 0;
+  font-size: clamp(36px, 8vw, 56px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+ }
+
+ .coming-soon-lede {
+  margin: 0 0 28px 0;
+  font-size: 16px;
+  line-height: 1.5;
+  opacity: 0.9;
+  max-width: 28ch;
+ }
+
+ .coming-soon-badge {
+  display: inline-block;
+  background: #fa6565;
+  color: #000000;
+  padding: 10px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: badge-pulse 2.5s ease-in-out infinite;
+ }
+
+ .coming-soon-badge-text {
+  position: relative;
+  z-index: 1;
+ }
+
+ .coming-soon-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+   90deg,
+   transparent 0%,
+   #fa6565 20%,
+   #fa6565 80%,
+   transparent 100%
+  );
+  opacity: 0.8;
+ }
+
+ @keyframes badge-pulse {
+  0%,
+  100% {
+   box-shadow: 0 0 0 0 rgba(250, 101, 101, 0.45);
+  }
+  50% {
+   box-shadow: 0 0 0 12px rgba(250, 101, 101, 0);
+  }
+ }
+
+ @media (max-width: 768px) {
+  .section {
+   padding: 20px;
+   min-height: 40vh;
+  }
+
+  .logo-container {
+   padding: 16px 16px 0;
+  }
+
+  .coming-soon-card {
+   padding: 36px 24px;
+  }
+
+  .coming-soon-lede {
+   font-size: 15px;
+  }
+ }
+</style>

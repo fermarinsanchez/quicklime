@@ -1,0 +1,280 @@
+---
+import backgroundJpg from "../assets/images/background.jpeg"
+import rectangleImg from "../assets/images/rectangle.png"
+import motomamiImg from "../assets/images/motomami.png"
+import logoImg from "../assets/images/quicklime-logo.png"
+import "@fontsource-variable/instrument-sans"
+import Navbar from "../components/Navbar.astro"
+
+type Props = {
+ title?: string
+}
+
+const { title = "Quicklime - Grip on youth" } = Astro.props
+---
+
+<html lang='en'>
+ <head>
+  <meta charset='utf-8' />
+  <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+  <meta name='viewport' content='width=device-width' />
+  <meta name='generator' content={Astro.generator} />
+  <title>{title}</title>
+ </head>
+ <body
+  style={`background-image: url(${backgroundJpg.src}); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed; min-height: 100vh; margin: 0; padding: 0;`}
+ >
+  <Navbar />
+  <slot />
+  <div class='images-container' aria-hidden='true'>
+   <img src={rectangleImg.src} alt='' class='rectangle-image' />
+   <img src={motomamiImg.src} alt='' class='motomami-image' />
+  </div>
+  <!-- Overlay para transición entre páginas (solo enlaces internos del menú) -->
+  <div
+   id='quicklime-transition-overlay'
+   class='transition-overlay'
+   aria-hidden='true'
+  >
+   <div class='transition-overlay-inner'>
+    <img alt='' class='transition-overlay-logo' />
+   </div>
+  </div>
+ </body>
+</html>
+
+<style>
+ /* =========================
+  * Base / reset (global)
+  * ========================= */
+ :global(*) {
+  box-sizing: border-box;
+ }
+
+ :global(html),
+ :global(body) {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+ }
+
+ :global(body) {
+  font-family: "Instrument Sans Variable", sans-serif;
+  position: relative;
+ }
+
+ /* Asegura que las imágenes no provoquen overflow horizontal */
+ :global(img) {
+  max-width: 100%;
+  height: auto;
+  display: block;
+ }
+
+ /* =========================
+  * Layout images (estrella + moto)
+  * ========================= */
+ .images-container {
+  position: fixed;
+  left: 0;
+  /* bottom: -100px; */
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+ }
+
+ .rectangle-image {
+  position: absolute;
+  left: -17%;
+  bottom: -25vh;
+  width: 80%;
+  height: auto;
+  z-index: 2;
+  transform: rotate(360deg);
+  transform-origin: center;
+  animation: rotate 50s linear infinite;
+ }
+ @keyframes rotate {
+  from {
+   transform: rotate(0deg);
+  }
+  to {
+   transform: rotate(360deg);
+  }
+ }
+
+ .motomami-image {
+  position: absolute;
+  left: 12%;
+  bottom: 15vh;
+  width: 50%;
+  height: auto;
+  pointer-events: auto;
+  z-index: 3;
+ }
+
+ /* Desktop: composición con ancho fijo para que no crezca al ensanchar el viewport */
+ @media (min-width: 769px) {
+  .images-container {
+   max-width: 900px;
+  }
+ }
+
+ /* Móvil y tablet portrait: estrella y moto más grandes, margen derecho ~10% en la moto */
+ @media (max-width: 768px) {
+  .rectangle-image {
+   left: -22%;
+   bottom: -12vh;
+   width: 100%;
+  }
+
+  .motomami-image {
+   left: 5%;
+   bottom: 5%;
+   width: 100%;
+   max-width: 85%;
+   object-fit: contain;
+   object-position: bottom left;
+  }
+ }
+
+ /* =========================
+  * Transición menú: logo → amarillo → fade a nueva página
+  * ========================= */
+ .transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  background-color: #f5e642;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1s ease-out;
+ }
+
+ .transition-overlay-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+ }
+
+ .transition-overlay-logo {
+  max-width: 60vw;
+  width: 400px;
+  height: auto;
+  transform: scale(0.4);
+  transition: transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+ }
+
+ /* Salida: overlay visible, logo crece hasta llenar pantalla amarilla */
+ .transition-overlay.transition-exit {
+  pointer-events: auto;
+  opacity: 1;
+ }
+
+ .transition-overlay.transition-exit .transition-overlay-logo {
+  transform: scale(3.2);
+ }
+
+ /* Durante el fade de salida el logo se queda en tamaño final (evita que vuelva al inicial) */
+ .transition-overlay.transition-exit-fade .transition-overlay-logo {
+  transform: scale(3.2);
+  transition: none;
+ }
+
+ /* Entrada (nueva página): overlay visible con logo grande, luego se desvanece */
+ .transition-overlay.transition-enter {
+  pointer-events: auto;
+  opacity: 1;
+ }
+
+ .transition-overlay.transition-enter .transition-overlay-logo {
+  transform: scale(3.2);
+ }
+
+ .transition-overlay.transition-enter-fade,
+ .transition-overlay.transition-exit-fade {
+  opacity: 0;
+  pointer-events: none;
+ }
+</style>
+
+<script is:inline>
+ ;(function () {
+  const STORAGE_KEY = "quicklime-transition-out"
+  const overlay = document.getElementById("quicklime-transition-overlay")
+  const overlayLogo = overlay?.querySelector(".transition-overlay-logo")
+
+  function isInternalNavLink(a) {
+   const href = a.getAttribute("href")
+   if (!href || href.startsWith("#")) return false
+   if (a.target === "_blank" || a.target === "_parent" || a.target === "_top")
+    return false
+   try {
+    const url = new URL(a.href, window.location.origin)
+    if (url.origin !== window.location.origin) return false
+    if (url.pathname === window.location.pathname) return false
+    return true
+   } catch {
+    return false
+   }
+  }
+
+  function runEnterTransition() {
+   if (!overlay) return
+   overlay.classList.add("transition-enter")
+   const onFadeDone = () => {
+    overlay.classList.remove("transition-enter", "transition-enter-fade")
+    overlay.removeEventListener("transitionend", onFadeDone)
+   }
+   requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+     overlay.classList.add("transition-enter-fade")
+     overlay.addEventListener("transitionend", onFadeDone)
+    })
+   })
+  }
+
+  function runExitTransition(href) {
+   if (!overlay || !overlayLogo) return
+   overlay.classList.add("transition-exit")
+   overlayLogo.addEventListener(
+    "transitionend",
+    function onLogoGrow() {
+     overlayLogo.removeEventListener("transitionend", onLogoGrow)
+     overlay.classList.add("transition-exit-fade")
+     overlay.addEventListener(
+      "transitionend",
+      function onFadeOut() {
+       overlay.removeEventListener("transitionend", onFadeOut)
+       window.location.href = href
+      },
+      { once: true },
+     )
+    },
+    { once: true },
+   )
+  }
+
+  if (
+   typeof sessionStorage !== "undefined" &&
+   sessionStorage.getItem(STORAGE_KEY)
+  ) {
+   sessionStorage.removeItem(STORAGE_KEY)
+   runEnterTransition()
+  }
+
+  document.body.addEventListener("click", (e) => {
+   const a = e.target?.closest?.("a")
+   if (!a || !isInternalNavLink(a)) return
+   e.preventDefault()
+   const href = a.href
+   sessionStorage.setItem(STORAGE_KEY, "1")
+   runExitTransition(href)
+  })
+ })()
+</script>

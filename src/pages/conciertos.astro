@@ -1,0 +1,340 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro"
+import Modal from "../components/Modal.astro"
+import logoImg from "../assets/images/quicklime-logo.png"
+import loneWolfPoster from "../assets/shows/lone_wolf.jpeg"
+import picaroPoster from "../assets/shows/w_quicklime_grip_bolo.jpg"
+
+const conciertos = [
+ {
+  cartel: "Lone Wolf + Quicklime",
+  lugar: "Sala the Times",
+  ciudad: "Toledo",
+  fecha: "7 de marzo de 2026",
+  hora: null,
+  precio: "10€",
+  nota: null,
+  poster: loneWolfPoster,
+ },
+ {
+  cartel: "Quicklime + Varonas",
+  subtitulo: "Presentación EP Grip on Youth",
+  lugar: "Sala Pícaro",
+  ciudad: "Toledo",
+  fecha: "17 de abril de 2026",
+  hora: "21:00h",
+  precio: "10€ anticipada · 12€ en taquilla",
+  nota: null,
+  poster: picaroPoster,
+  entradas:
+   "https://entradas.picarotoledo.com/web/?menu=1162&pagina=entradas&item=58629&siteID=salapicaro",
+ },
+ {
+  cartel: "Bule + Quicklime",
+  lugar: "Sala Urania",
+  ciudad: "Ferrol",
+  fecha: "2 de octubre de 2026",
+  hora: null,
+  precio: null,
+  nota: "Ferrol Records",
+  poster: null,
+ },
+ {
+  cartel: "Quicklime + Chorima",
+  lugar: "Boiro",
+  ciudad: "A Coruña",
+  fecha: "3 de octubre de 2026",
+  hora: null,
+  precio: null,
+  nota: "Radix Records",
+  poster: null,
+ },
+]
+---
+
+<SiteLayout title='Conciertos | Quicklime'>
+ <main>
+  <header class='section-header'>
+   <div class='logo-container'>
+    <img src={logoImg.src} alt='Quicklime logo' class='logo-image' />
+   </div>
+  </header>
+  <div class='section' id='conciertos-section'>
+   <div class='conciertos-content-block' id='conciertos-content-block'>
+    <div class='section-title-container'>
+     <h1 class='page-title'>Próximos conciertos</h1>
+    </div>
+    <ul class='conciertos-list' aria-label='Próximos conciertos'>
+     {
+      conciertos.map((c, i) => (
+       <li class='concierto-card' data-has-poster={!!c.poster}>
+        <div class='concierto-info'>
+         <div class='concierto-cartel'>{c.cartel}</div>
+         {c.subtitulo && <div class='concierto-subtitulo'>{c.subtitulo}</div>}
+         <div class='concierto-lugar'>
+          {c.lugar}
+          {c.ciudad && <span class='concierto-ciudad'> · {c.ciudad}</span>}
+         </div>
+         <div class='concierto-fecha'>
+          {c.fecha}
+          {c.hora && <span class='concierto-hora'> · {c.hora}</span>}
+         </div>
+         {c.precio && <div class='concierto-precio'>{c.precio}</div>}
+         {c.nota && <div class='concierto-nota'>{c.nota}</div>}
+         {c.entradas && (
+          <div class='concierto-entradas'>
+           <a href={c.entradas} target='_blank'>
+            Comprar entradas
+           </a>
+          </div>
+         )}
+        </div>
+        {c.poster && (
+         <div class='concierto-poster'>
+          <Modal
+           id={`poster-modal-${i}`}
+           imageSrc={c.poster.src}
+           imageAlt={`Cartel: ${c.cartel}`}
+          >
+           <button type='button' class='poster-thumb-button' slot='trigger'>
+            <img
+             src={c.poster.src}
+             alt={`Cartel ${c.cartel}`}
+             class='poster-thumb'
+             width='140'
+             height='140'
+            />
+            <span class='poster-thumb-label'>Ver cartel</span>
+           </button>
+          </Modal>
+         </div>
+        )}
+       </li>
+      ))
+     }
+    </ul>
+   </div>
+  </div>
+ </main>
+</SiteLayout>
+
+<style>
+ .section {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding: 32px;
+  color: #ffffff;
+  position: relative;
+  z-index: 200;
+  margin: 0 auto;
+  gap: 32px;
+ }
+
+ .conciertos-content-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 32px;
+  width: 100%;
+  transform: translateY(100vh);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+ }
+
+ .conciertos-content-block.is-visible {
+  transform: translateY(0);
+ }
+
+ .section-title-container {
+  margin: 0 0 12px 0;
+ }
+
+ .section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+ }
+
+ .logo-container {
+  width: 100%;
+  padding: 32px 32px 0;
+ }
+
+ .logo-image {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+ }
+
+ .page-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+ }
+
+ .conciertos-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 640px;
+ }
+
+ .concierto-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+ }
+
+ .concierto-card[data-has-poster="true"] {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+ }
+
+ .concierto-info {
+  flex: 1;
+  min-width: 0;
+ }
+
+ .concierto-poster {
+  flex-shrink: 0;
+ }
+
+ .concierto-entradas > a {
+  color: #ffffff;
+ }
+
+ .poster-thumb-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+ }
+
+ .poster-thumb-button:hover .poster-thumb {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+ }
+
+ .poster-thumb {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  transition: box-shadow 0.2s ease;
+ }
+
+ .poster-thumb-label {
+  font-size: 12px;
+  opacity: 0.9;
+  text-decoration: underline;
+ }
+
+ .concierto-cartel {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+ }
+
+ .concierto-subtitulo {
+  font-size: 14px;
+  opacity: 0.9;
+  font-style: italic;
+ }
+
+ .concierto-lugar,
+ .concierto-fecha,
+ .concierto-precio,
+ .concierto-nota {
+  font-size: 15px;
+  opacity: 0.95;
+ }
+
+ .concierto-ciudad,
+ .concierto-hora {
+  opacity: 0.85;
+ }
+
+ .concierto-precio {
+  font-weight: 600;
+  margin-top: 4px;
+ }
+
+ .concierto-nota {
+  font-size: 13px;
+  opacity: 0.8;
+ }
+
+ @media (max-width: 768px) {
+  .section {
+   padding: 20px;
+   align-items: center;
+  }
+
+  .logo-container {
+   padding: 16px 16px 0;
+  }
+
+  .page-title {
+   font-size: 22px;
+  }
+
+  .concierto-card {
+   padding: 16px 18px;
+  }
+
+  .concierto-card[data-has-poster="true"] {
+   align-items: stretch;
+  }
+
+  .concierto-poster {
+   display: flex;
+   justify-content: flex-end;
+  }
+
+  .poster-thumb {
+   width: 80px;
+   height: 80px;
+  }
+
+  .concierto-cartel {
+   font-size: 18px;
+  }
+ }
+</style>
+
+<script>
+ ;(function () {
+  const section = document.getElementById("conciertos-section")
+  const block = document.getElementById("conciertos-content-block")
+  if (!section || !block) return
+  const observer = new IntersectionObserver(
+   (entries) => {
+    for (const entry of entries) {
+     if (entry.isIntersecting) block.classList.add("is-visible")
+     else block.classList.remove("is-visible")
+    }
+   },
+   { root: null, rootMargin: "0px", threshold: 0.1 },
+  )
+  observer.observe(section)
+ })()
+</script>

@@ -1,0 +1,175 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro"
+import logoImg from "../assets/images/quicklime-logo.png"
+
+// Pega la URL de embed de Spotify para cada trabajo.
+// Álbum: https://open.spotify.com/embed/album/<id>
+// Playlist: https://open.spotify.com/embed/playlist/<id>
+const lpTitle = "Upper Middle Class Heroes"
+
+const sessionTitle = "Black Noise Sessions #1 (Live)"
+---
+
+<SiteLayout title='Música | Quicklime'>
+ <main>
+  <header class='section-header'>
+   <div class='logo-container'>
+    <img src={logoImg.src} alt='Quicklime logo' class='logo-image' />
+   </div>
+  </header>
+  <div class='section' id='musica-section'>
+   <div class='musica-content-block' id='musica-content-block'>
+    <section class='playlist-block' aria-label={lpTitle}>
+     <h2 class='playlist-title'>{lpTitle}</h2>
+     <div class='embed-wrap'>
+      <iframe
+       data-testid='embed-iframe'
+       style='border-radius:12px'
+       src='https://open.spotify.com/embed/album/2Ow4qfE1xhgc7xAlPv8MXZ?utm_source=generator'
+       width='100%'
+       height='352'
+       frameborder='0'
+       allowfullscreen=''
+       allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+       loading='lazy'></iframe>
+     </div>
+    </section>
+
+    <section class='playlist-block' aria-label={sessionTitle}>
+     <h2 class='playlist-title'>{sessionTitle}</h2>
+     <div class='embed-wrap'>
+      <iframe
+       data-testid='embed-iframe'
+       style='border-radius:12px'
+       src='https://open.spotify.com/embed/album/1iUp9hC50QQvvze9r3cBS6?utm_source=generator'
+       width='100%'
+       height='352'
+       frameborder='0'
+       allowfullscreen=''
+       allow='autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture'
+       loading='lazy'></iframe>
+     </div>
+    </section>
+   </div>
+  </div>
+ </main>
+</SiteLayout>
+
+<style>
+ .section {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding: 32px;
+  color: #ffffff;
+  position: relative;
+  z-index: 200;
+  margin: 0 auto;
+  gap: 32px;
+ }
+
+ .musica-content-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 32px;
+  width: 100%;
+  transform: translateY(100vh);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+ }
+
+ .musica-content-block.is-visible {
+  transform: translateY(0);
+ }
+
+ .section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+ }
+
+ .logo-container {
+  width: 100%;
+  padding: 32px 32px 0;
+ }
+
+ .logo-image {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+ }
+
+ .section-header h1 {
+  margin: 0;
+  letter-spacing: 0.02em;
+ }
+
+ .lede {
+  margin: 8px 0 0 0;
+  opacity: 0.9;
+  max-width: 52ch;
+ }
+
+ .playlist-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+ }
+
+ .playlist-title {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+ }
+
+ .embed-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.2);
+ }
+
+ .spotify-embed {
+  display: block;
+  border: 0;
+ }
+
+ @media (max-width: 768px) {
+  .section {
+   padding: 20px;
+  }
+
+  .playlist-block {
+   margin-top: 24px;
+  }
+
+  .logo-container {
+   width: 100%;
+   padding: 16px 16px 0;
+  }
+ }
+</style>
+
+<script>
+ ;(function () {
+  const section = document.getElementById("musica-section")
+  const block = document.getElementById("musica-content-block")
+  if (!section || !block) return
+  const observer = new IntersectionObserver(
+   (entries) => {
+    for (const entry of entries) {
+     if (entry.isIntersecting) block.classList.add("is-visible")
+     else block.classList.remove("is-visible")
+    }
+   },
+   { root: null, rootMargin: "0px", threshold: 0.1 },
+  )
+  observer.observe(section)
+ })()
+</script>

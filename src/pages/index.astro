@@ -1,0 +1,188 @@
+---
+import logoImg from "../assets/images/quicklime-logo.png"
+import logoTextImg from "../assets/images/grip-on-youth.png"
+import SiteLayout from "../layouts/SiteLayout.astro"
+---
+
+<SiteLayout title='Quicklime - Grip on youth'>
+ <section class='logo-container' id='hero-logo-section'>
+  <img src={logoImg.src} alt='Quicklime logo' class='logo-image' />
+  <div class='logo-text'>
+   <div class='logo-text-container-left'></div>
+   <div class='logo-text-container-right' id='logo-text-container-right'>
+    <img src={logoTextImg.src} alt='Quicklime text' class='logo-text-image' />
+    <div class='text-container'>
+     <h1 class='text-container-title'>NUEVO EP</h1>
+     <h2 class='text-container-subtitle'>DISPONIBLE</h2>
+     <h2 class='text-container-date'>17/04/2026</h2>
+    </div>
+   </div>
+  </div>
+ </section>
+</SiteLayout>
+
+<style>
+ /* =========================
+   * Logo + texto
+   * ========================= */
+ .logo-container {
+  position: relative;
+  z-index: 200;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 16px 0;
+ }
+
+ .logo-image {
+  width: 100%;
+  max-width: 1200px;
+ }
+
+ .logo-text {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  width: 100%;
+  max-width: 1200px;
+  /* importante para que los hijos puedan “encogerse” y no desborden */
+  min-width: 0;
+ }
+
+ .logo-text-container-left {
+  /* spacer flexible: NO suma ancho extra (evita overflow a la derecha) */
+  flex: 1 1 0;
+  min-width: 0;
+ }
+
+ .logo-text-container-right {
+  /* el bloque real: ocupa hasta la mitad, pero puede encogerse */
+  flex: 0 1 50%;
+  max-width: 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Inicial: oculto por debajo del viewport; animación al entrar en vista */
+  transform: translateY(100vh);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+ }
+
+ .logo-text-container-right.is-visible {
+  transform: translateY(0);
+ }
+
+ /* La imagen del texto siempre “elástica” dentro de su contenedor */
+ .logo-text-image {
+  width: 100%;
+  height: auto;
+  display: block;
+ }
+
+ .text-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-left: 16px;
+  padding-top: 16px;
+ }
+
+ .text-container h1,
+ .text-container h2,
+ .text-container h3 {
+  margin: 0;
+ }
+
+ .text-container-title {
+  /* Mobile-first: tamaños base */
+  font-size: 48px;
+  font-weight: 700;
+  color: #ffffff;
+ }
+
+ .text-container-subtitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+ }
+
+ .text-container-date {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+ }
+
+ /* =========================
+   * Responsive
+   * ========================= */
+ /* Desktop: composición con ancho fijo para que no crezca al ensanchar el viewport */
+ @media (min-width: 769px) {
+  .logo-container {
+   gap: 32px;
+   padding: 16px 16px 0;
+  }
+
+  /* Tablet/desktop pequeño (>=769px): subimos tipografía */
+  .text-container-title {
+   font-size: 72px;
+  }
+
+  .text-container-subtitle,
+  .text-container-date {
+   font-size: 36px;
+  }
+ }
+
+ /* Desktop (>=1024px): tipografía final */
+ @media (min-width: 1024px) {
+  .text-container-title {
+   font-size: 96px;
+  }
+
+  .text-container-subtitle,
+  .text-container-date {
+   font-size: 48px;
+  }
+ }
+
+ /* Móvil y tablet portrait */
+ @media (max-width: 768px) {
+  .logo-text-container-left {
+   display: none;
+  }
+
+  .logo-text-container-right {
+   width: 100%;
+   flex: auto;
+   max-width: 100%;
+  }
+ }
+</style>
+
+<script>
+ ;(function () {
+  const section = document.getElementById("hero-logo-section")
+  const block = document.getElementById("logo-text-container-right")
+  if (!section || !block) return
+
+  const observer = new IntersectionObserver(
+   (entries) => {
+    for (const entry of entries) {
+     if (entry.isIntersecting) {
+      block.classList.add("is-visible")
+     } else {
+      block.classList.remove("is-visible")
+     }
+    }
+   },
+   { root: null, rootMargin: "0px", threshold: 0.1 },
+  )
+
+  observer.observe(section)
+ })()
+</script>

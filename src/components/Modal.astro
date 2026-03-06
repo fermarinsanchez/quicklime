@@ -1,0 +1,181 @@
+---
+interface Props {
+ id: string
+ imageSrc?: string
+ imageAlt?: string
+ title?: string
+}
+
+const { id, imageSrc, imageAlt = "Ver a tamaño completo", title } = Astro.props
+---
+
+<div
+ class='modal-trigger-wrapper'
+ data-modal-trigger={id}
+ tabindex='0'
+ role='button'
+ aria-label='Abrir cartel en pantalla completa'
+>
+ <slot name='trigger' />
+</div>
+
+<div
+ id={id}
+ class='modal-overlay'
+ role='dialog'
+ aria-modal='true'
+ aria-label={title ?? "Modal"}
+ hidden
+>
+ <div class='modal-backdrop' data-modal-close={id}></div>
+ <div class='modal-content'>
+  <button
+   type='button'
+   class='modal-close'
+   data-modal-close={id}
+   aria-label='Cerrar'
+  >
+   <span aria-hidden='true'>&times;</span>
+  </button>
+  {
+   imageSrc ? (
+    <img src={imageSrc} alt={imageAlt} class='modal-image' />
+   ) : (
+    <slot />
+   )
+  }
+ </div>
+</div>
+
+<script>
+ function initModals() {
+  if (document.body.hasAttribute("data-modals-initialized")) return
+  document.body.setAttribute("data-modals-initialized", "true")
+
+  document.querySelectorAll("[data-modal-trigger]").forEach((trigger) => {
+   const modalId = trigger.getAttribute("data-modal-trigger")
+   if (!modalId) return
+   const modal = document.getElementById(modalId)
+   if (!modal) return
+
+   const open = () => {
+    modal.removeAttribute("hidden")
+    modal.classList.add("is-open")
+    document.body.style.overflow = "hidden"
+    document.addEventListener("keydown", onEscape)
+   }
+
+   const close = () => {
+    modal.setAttribute("hidden", "")
+    modal.classList.remove("is-open")
+    document.body.style.overflow = ""
+    document.removeEventListener("keydown", onEscape)
+   }
+
+   const onEscape = (e: Event) => {
+    if ((e as KeyboardEvent).key === "Escape") close()
+   }
+
+   trigger.addEventListener("click", open)
+   trigger.addEventListener("keydown", (e: Event) => {
+    const ev = e as KeyboardEvent
+    if (ev.key === "Enter" || ev.key === " ") {
+     e.preventDefault()
+     open()
+    }
+   })
+
+   modal.querySelectorAll(`[data-modal-close="${modalId}"]`).forEach((el) => {
+    el.addEventListener("click", close)
+   })
+  })
+ }
+
+ initModals()
+</script>
+
+<style>
+ .modal-trigger-wrapper {
+  cursor: pointer;
+  display: inline-block;
+  border: none;
+  background: none;
+  padding: 0;
+ }
+
+ .modal-trigger-wrapper:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+ }
+
+ .modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+   opacity 0.2s ease,
+   visibility 0.2s ease;
+ }
+
+ .modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+ }
+
+ .modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+ }
+
+ .modal-content {
+  position: relative;
+  max-width: 95vw;
+  max-height: 95vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ }
+
+ .modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 1;
+  transition: background 0.2s ease;
+ }
+
+ .modal-close:hover {
+  background: rgba(255, 255, 255, 0.35);
+ }
+
+ .modal-image {
+  max-width: 100%;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+ }
+</style>
