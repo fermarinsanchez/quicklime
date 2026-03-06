@@ -4,10 +4,10 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 
 // https://astro.build/config
-// En producción (build para GitHub Pages) usamos base; en dev trabajas en /
+// base '/' para que funcione con dominio personalizado (quicklimemusic.com) en la raíz
 export default defineConfig({
-  site: 'https://fermarinsanchez.github.io',
-  base: process.env.NODE_ENV === 'production' ? '/quicklime/' : '/',
+  site: 'https://quicklimemusic.com',
+  base: '/',
   build: {
     // Evitar _astro para que GitHub Pages (Jekyll) no ignore la carpeta de assets
     assets: 'astro',
