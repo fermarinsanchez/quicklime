@@ -1,15 +1,28 @@
 ---
 const categoriesMenu = [
- { nombre: "INICIO", url: "/" },
- { nombre: "MUSICA", url: "/musica" },
- { nombre: "VIDEOS", url: "/videos" },
- { nombre: "CONCIERTOS", url: "/conciertos" },
+ { nombre: "INICIO", url: "/", icon: "home" },
+ { nombre: "MUSICA", url: "/musica", icon: "music" },
+ { nombre: "VIDEOS", url: "/videos", icon: "video" },
+ { nombre: "CONCIERTOS", url: "/conciertos", icon: "calendar" },
  {
   nombre: "TIENDA",
   url: "https://quicklime-store.sumupstore.com/",
   target: "_blank",
+  icon: "shop",
  },
 ]
+
+const icons: Record<string, string> = {
+ home: '<path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>',
+ music:
+  '<path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>',
+ video:
+  '<path fill="currentColor" d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>',
+ calendar:
+  '<path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>',
+ shop:
+  '<path fill="currentColor" d="M16 6V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H2v13c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6h-6zm-6-2h4v2h-4V4zm10 15H4V8h16v11z"/>',
+}
 
 const pathname = Astro.url.pathname
 const base = import.meta.env.BASE_URL
@@ -41,8 +54,16 @@ function isActive(category: (typeof categoriesMenu)[number]) {
        href={href(category)}
        class={isActiveLink ? "is-active" : undefined}
        target={category.target}
+       aria-label={category.nombre}
       >
-       {category.nombre}
+       <svg
+        class='nav-icon'
+        xmlns='http://www.w3.org/2000/svg'
+        viewBox='0 0 24 24'
+        aria-hidden='true'
+        set:html={icons[category.icon]}
+       />
+       <span class='nav-label'>{category.nombre}</span>
       </a>
      )
     })
@@ -94,7 +115,11 @@ function isActive(category: (typeof categoriesMenu)[number]) {
    text-decoration: none;
    color: #000000;
    padding: clamp(2px, 0.5vw, 6px) clamp(6px, 1vw, 14px);
-   border: clamp(2px, 0.4vw, 5px) solid transparent; /* evita “saltos” al hacer hover */
+   border: clamp(2px, 0.4vw, 5px) solid transparent;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   gap: 6px;
   }
 
   .navbar-menu > a:hover {
@@ -105,12 +130,43 @@ function isActive(category: (typeof categoriesMenu)[number]) {
    border-color: #000000;
   }
 
-  /* =========================
-   * Responsive
-   * ========================= */
+  .nav-icon {
+   width: 22px;
+   height: 22px;
+   flex-shrink: 0;
+   display: none;
+  }
+
+  .nav-label {
+   display: inline;
+  }
+
+  /* Móvil: icono + label pequeño debajo */
   @media (max-width: 768px) {
    .navbar {
     height: 56px;
+   }
+   .navbar-menu {
+    gap: 2px;
+    padding: 0 2px;
+   }
+   .navbar-menu > a {
+    flex-direction: column;
+    padding: 4px 6px;
+    gap: 0;
+   }
+   .nav-icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+   }
+   .nav-label {
+    display: block;
+    font-size: 9px;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    padding-top: 4px;
    }
   }
 

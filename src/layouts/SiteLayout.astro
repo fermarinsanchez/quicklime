@@ -228,17 +228,27 @@ const { title = "Quicklime - Grip on youth" } = Astro.props
    }
   }
 
+  const FALLBACK_MS = 2500
+
   function runEnterTransition() {
    if (!overlay) return
    overlay.classList.add("transition-enter")
-   const onFadeDone = () => {
+   let done = false
+   const finish = () => {
+    if (done) return
+    done = true
     overlay.classList.remove("transition-enter", "transition-enter-fade")
-    overlay.removeEventListener("transitionend", onFadeDone)
+    overlay.removeEventListener("transitionend", onFadeDoneWithFallback)
+   }
+   const fallback = setTimeout(finish, FALLBACK_MS)
+   const onFadeDoneWithFallback = () => {
+    clearTimeout(fallback)
+    finish()
    }
    requestAnimationFrame(() => {
     requestAnimationFrame(() => {
      overlay.classList.add("transition-enter-fade")
-     overlay.addEventListener("transitionend", onFadeDone)
+     overlay.addEventListener("transitionend", onFadeDoneWithFallback)
     })
    })
   }
@@ -246,16 +256,26 @@ const { title = "Quicklime - Grip on youth" } = Astro.props
   function runExitTransition(href) {
    if (!overlay || !overlayLogo) return
    overlay.classList.add("transition-exit")
+   let navigated = false
+   const doNavigate = () => {
+    if (navigated) return
+    navigated = true
+    window.location.href = href
+   }
+   const fallback = setTimeout(doNavigate, FALLBACK_MS)
    overlayLogo.addEventListener(
     "transitionend",
     function onLogoGrow() {
      overlayLogo.removeEventListener("transitionend", onLogoGrow)
+     clearTimeout(fallback)
      overlay.classList.add("transition-exit-fade")
+     const fadeFallback = setTimeout(doNavigate, 1500)
      overlay.addEventListener(
       "transitionend",
       function onFadeOut() {
+       clearTimeout(fadeFallback)
        overlay.removeEventListener("transitionend", onFadeOut)
-       window.location.href = href
+       doNavigate()
       },
       { once: true },
      )
